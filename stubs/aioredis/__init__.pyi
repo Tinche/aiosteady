@@ -1,0 +1,9 @@
+from aioredis.commands.scripting import ScriptingCommandsMixin
+from .commands.scripting import ScriptingCommandsMixin
+from .commands.generic import GenericCommandsMixin
+
+class Redis(GenericCommandsMixin, ScriptingCommandsMixin):
+    def close(self): ...
+    async def wait_closed(self): ...
+
+async def create_redis(address: str) -> Redis: ...
