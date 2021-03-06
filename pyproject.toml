@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "aiosteady"
 version = "0.1.0"
-description = ""
+description = "Rate limiting for asyncio"
 authors = ["Tin Tvrtkovic <tinchester@gmail.com>"]
+license = "MIT"
+readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "^3.8"
