@@ -127,7 +127,6 @@ async def test_optimized_key_expire(aioredis):
 
     key = "test_key"
     await sut.redis.delete(key)
-    recharge = 1
 
     await sut.consume(key, 100, 1.0, amount=2)
     assert (await sut.peek(key, 100, 1.0)).level == 2
