@@ -19,3 +19,21 @@ aiosteady: rate limiting for asyncio
 
 **aiosteady** is an Apache2 licensed library, written in Python, for rate limiting
 in asyncio application using Redis.
+
+aiosteady currently implements the leaky bucket in a very efficient way.
+
+.. code-block:: python
+
+    throttler = Throttler(aioredis)
+
+    res = await throttler.consume(f'user:{user_id}')
+
+
+Installation
+------------
+
+To install aiosteady, simply:
+
+.. code-block:: bash
+
+    $ pip install aiosteady

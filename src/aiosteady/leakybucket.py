@@ -18,20 +18,25 @@ class ThrottleResult:
 @frozen
 class Throttler:
     redis: ScriptingCommandsMixin
+    max_capacity: int
+    drop_recharge: float
+    block_duration: Optional[float] = None
 
     async def consume(
         self,
-        key,
-        max_capacity: int,
-        drop_recharge: float,
-        amount=1,
-        block_duration: Optional[float] = None,
+        key: str,
+        amount: int = 1,
     ) -> ThrottleResult:
         """Attempt consuming a number of drops from the bucket."""
         success, block_remaining, level, to_next = await self.redis.eval(
             SCRIPT_CONSUME,
             [key],
-            [max_capacity, str(drop_recharge), block_duration or 0, amount],
+            [
+                self.max_capacity,
+                str(self.drop_recharge),
+                self.block_duration or 0,
+                amount,
+            ],
         )
 
         return ThrottleResult(
@@ -43,21 +48,19 @@ class Throttler:
 
     async def peek(
         self,
-        key,
-        max_capacity: int,
-        drop_recharge: float,
+        key: str,
     ) -> ThrottleResult:
         """"""
         block_remaining, level, to_next = await self.redis.eval(
             SCRIPT_PEEK,
             [key],
-            [max_capacity, str(drop_recharge)],
+            [self.max_capacity, str(self.drop_recharge)],
         )
 
         br = br if (br := float(block_remaining)) != 0.0 else None
 
         return ThrottleResult(
-            br is None and (level < max_capacity),
+            br is None and (level < self.max_capacity),
             level,
             float(to_next),
             br,
