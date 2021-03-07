@@ -68,15 +68,25 @@ optional blocking duration).
 
 A ``Throttler`` supports two operations: consuming and peeking.
 
-``Throttler.consume("a_key")`` (``consume`` because it consumes bucket resources)
-attempts to put the given number of drops (default 1) from the bucket at the
-given key. It returns an instance of ``aiosteady.leakybucket.ThrottleResult``,
-with fields for:
+* ``await Throttler.consume("a_key")`` (``consume`` because it consumes bucket resources)
+  attempts to put the given number of drops (default 1) from the bucket at the
+  given key. It returns an instance of ``aiosteady.leakybucket.ThrottleResult``,
+  with fields for:
 
-* ``success``: a boolean, describing whether the consumption was successful
-* ``level``: an integer, describing the new level of the bucket
-* ``until_next_drop``: a float, describing the number of seconds left after the next drop regenerates
-* ``blocked_for``: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
+  * ``success``: a boolean, describing whether the consumption was successful
+  * ``level``: an integer, describing the new level of the bucket
+  * ``until_next_drop``: a float, describing the number of seconds left after the next drop regenerates
+  
+  * ``blocked_for``: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
 
-``Throttler.peek("a_key")`` returns the same ``ThrottleResult`` but without attempting to
-consume any drops.
+* ``await Throttler.peek("a_key")`` returns the same ``ThrottleResult`` but without attempting to
+  consume any drops.
+
+Both operations are implemented using a single Redis call, using Lua scripting.
+
+Credits
+-------
+
+The Lua Redis script for atomic leaky bucket has been taken and heavily adapted from the Prorate_ project.
+
+.. _Prorate: https://github.com/WeTransfer/prorate
