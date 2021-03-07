@@ -17,10 +17,13 @@ aiosteady: rate limiting for asyncio
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
 
+
+----
+
 **aiosteady** is an MIT licensed library, written in Python, for rate limiting
 in asyncio application using Redis and the aioredis_ library.
 
-aiosteady currently implements the leaky bucket algorithm in a very efficient way.
+aiosteady currently implements the `leaky bucket algorithm` in a very efficient way.
 
 .. code-block:: python
     
@@ -33,6 +36,7 @@ aiosteady currently implements the leaky bucket algorithm in a very efficient wa
     res = await throttler.consume(f'user:{user_id}')
 
 .. _aioredis: https://github.com/aio-libs/aioredis
+.. _leaky bucket algorithm: https://en.wikipedia.org/wiki/Leaky_bucket
 
 Installation
 ------------
@@ -62,7 +66,7 @@ of an ``aioredis`` client and rate limiting parameters (the maximum bucket
 capacity, the number of seconds it takes for a drop to leak out, and an
 optional blocking duration).
 
-``Throttler``s support two operations: consuming and peeking.
+A ``Throttler`` supports two operations: consuming and peeking.
 
 ``Throttler.consume("a_key")`` (``consume`` because it consumes bucket resources)
 attempts to put the given number of drops (default 1) from the bucket at the
