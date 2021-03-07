@@ -17,8 +17,8 @@ aiosteady: rate limiting for asyncio
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
 
-**aiosteady** is an Apache2 licensed library, written in Python, for rate limiting
-in asyncio application using Redis and the `aioredis` library.
+**aiosteady** is an MIT licensed library, written in Python, for rate limiting
+in asyncio application using Redis and the aioredis_ library.
 
 aiosteady currently implements the leaky bucket algorithm in a very efficient way.
 
@@ -31,7 +31,8 @@ aiosteady currently implements the leaky bucket algorithm in a very efficient wa
     # consume() returns information about success, the current bucket level,
     # how long until the next drop recharges, etc.
     res = await throttler.consume(f'user:{user_id}')
-    
+
+.. _aioredis: https://github.com/aio-libs/aioredis
 
 Installation
 ------------
@@ -56,22 +57,22 @@ seconds, freeing space in the bucket for a new drop to be put into it.
 In addition to making the consumption fail, full buckets can optionally be
 configured to block further attempts to consume for a period.
 
-Create an instance of `aiosteady.leakybucket.Throttler`, giving it an instance
-of an `aioredis` client and rate limiting parameters (the maximum bucket
+Create an instance of ``aiosteady.leakybucket.Throttler``, giving it an instance
+of an ``aioredis`` client and rate limiting parameters (the maximum bucket
 capacity, the number of seconds it takes for a drop to leak out, and an
 optional blocking duration).
 
-`Throttler`s support two operations: consuming and peeking.
+``Throttler``s support two operations: consuming and peeking.
 
-`Throttler.consume("a_key")` (`consume` because it consumes bucket resources)
+``Throttler.consume("a_key")`` (``consume`` because it consumes bucket resources)
 attempts to put the given number of drops (default 1) from the bucket at the
-given key. It returns an instance of `aiosteady.leakybucket.ThrottleResult`,
+given key. It returns an instance of ``aiosteady.leakybucket.ThrottleResult``,
 with fields for:
 
-* `success`: a boolean, describing whether the consumption was successful
-* `level`: an integer, describing the new level of the bucket
-* `until_next_drop`: a float, describing the number of seconds left after the next drop regenerates
-* `blocked_for`: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
+* ``success``: a boolean, describing whether the consumption was successful
+* ``level``: an integer, describing the new level of the bucket
+* ``until_next_drop``: a float, describing the number of seconds left after the next drop regenerates
+* ``blocked_for``: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
 
-`Throttler.peek("a_key")` returns the same `ThrottleResult` but without attempting to
+``Throttler.peek("a_key")`` returns the same ``ThrottleResult`` but without attempting to
 consume any drops.
