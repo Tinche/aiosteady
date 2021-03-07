@@ -27,7 +27,7 @@ aiosteady currently implements the `leaky bucket algorithm`_ in a very efficient
 
 .. code-block:: python
     
-    max_capacity = 10  # The bucket can contain up to 10 drops
+    max_capacity = 10  # The bucket can contain up to 10 drops, starts with 0
     drop_recharge = 5.0  # One drop recharges every 5 seconds.
     throttler = Throttler(aioredis, max_capacity, drop_recharge)
 
