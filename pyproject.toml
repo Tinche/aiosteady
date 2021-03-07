@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiosteady"
-version = "0.1.0"
+version = "0.2.0dev0"
 description = "Rate limiting for asyncio"
 authors = ["Tin Tvrtkovic <tinchester@gmail.com>"]
 license = "MIT"
