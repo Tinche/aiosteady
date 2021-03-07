@@ -51,15 +51,14 @@ To install aiosteady, simply:
 Usage
 -----
 
-The leaky bucket algorithm follows a simple model. A single bucket contains
-a number of drops, called the bucket level. Buckets start with zero drops.
-Buckets have a maximum capacity of drops. Each consumption inserts one or more
-drops into the bucket, up until the maximum capacity. If the bucket would
-overflow, the consumption fails. One drop leaks out every `drop_recharge`
-seconds, freeing space in the bucket for a new drop to be put into it.
+The leaky bucket algorithm follows a simple model.
 
-In addition to making the consumption fail, full buckets can optionally be
-configured to block further attempts to consume for a period.
+* A single bucket contains a number of drops, called the bucket level. Buckets start with zero drops.
+* Buckets have a maximum capacity of drops.
+* Each use of the bucket (consumption) inserts one or more drops into the bucket, up until the maximum capacity. If the bucket would overflow, the consumption fails.
+* One drop leaks out every `drop_recharge` seconds, freeing space in the bucket for a new drop to be put into it.
+
+* In addition to making the consumption fail, full buckets can optionally be configured to block further attempts to consume for a period.
 
 Create an instance of ``aiosteady.leakybucket.Throttler``, giving it an instance
 of an ``aioredis`` client and rate limiting parameters (the maximum bucket
