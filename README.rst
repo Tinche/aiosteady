@@ -68,7 +68,7 @@ optional blocking duration).
 A ``Throttler`` supports two operations: consuming and peeking.
 
 * ``await Throttler.consume("a_key")`` (``consume`` because it consumes bucket resources)
-  attempts to put the given number of drops (default 1) from the bucket at the
+  attempts to put the given number of drops (default 1) into the bucket at the
   given key. It returns an instance of ``aiosteady.leakybucket.ThrottleResult``,
   with fields for:
 
