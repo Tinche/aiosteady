@@ -36,7 +36,7 @@ aiosteady currently implements the `leaky bucket algorithm` in a very efficient 
     res = await throttler.consume(f'user:{user_id}')
 
 .. _aioredis: https://github.com/aio-libs/aioredis
-.. _leaky bucket algorithm: https://en.wikipedia.org/wiki/Leaky_bucket
+.. _`leaky bucket algorithm`: https://en.wikipedia.org/wiki/Leaky_bucket
 
 Installation
 ------------
