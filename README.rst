@@ -83,6 +83,17 @@ A ``Throttler`` supports two operations: consuming and peeking.
 
 Both operations are implemented using a single Redis call, using Lua scripting.
 
+Changelog
+---------
+
+1.1.0 (2021-04-08)
+~~~~~~~~~~~~~~~~~~
+* Use the Redis ``evalsha`` instead of ``eval``, for efficiency.
+
+1.0.0 (2021-03-07)
+~~~~~~~~~~~~~~~~~~
+* Initial release.
+
 Credits
 -------
 
