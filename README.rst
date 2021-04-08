@@ -21,7 +21,7 @@ aiosteady: rate limiting for asyncio
 ----
 
 **aiosteady** is an MIT licensed library, written in Python, for rate limiting
-in asyncio application using Redis and the aioredis_ library.
+in asyncio applications using Redis and the aioredis_ library.
 
 aiosteady currently implements the `leaky bucket algorithm`_ in a very efficient way.
 
