@@ -1,0 +1,6 @@
+class RedisError(Exception):
+    ...
+
+
+class ReplyError(RedisError):
+    ...
