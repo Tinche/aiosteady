@@ -86,11 +86,11 @@ Both operations are implemented using a single Redis call, using Lua scripting.
 Changelog
 ---------
 
-1.1.0 (2021-04-08)
+0.2.0 (2021-04-08)
 ~~~~~~~~~~~~~~~~~~
 * Use the Redis ``evalsha`` instead of ``eval``, for efficiency.
 
-1.0.0 (2021-03-07)
+0.1.0 (2021-03-07)
 ~~~~~~~~~~~~~~~~~~
 * Initial release.
 
