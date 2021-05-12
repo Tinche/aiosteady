@@ -86,6 +86,10 @@ Both operations are implemented using a single Redis call, using Lua scripting.
 Changelog
 ---------
 
+0.2.1 (2021-05-12)
+~~~~~~~~~~~~~~~~~~
+* Improve the ``attrs`` dependency specification, since ``attrs`` uses CalVer.
+
 0.2.0 (2021-04-08)
 ~~~~~~~~~~~~~~~~~~
 * Use the Redis ``evalsha`` instead of ``eval``, for efficiency.
