@@ -26,7 +26,7 @@ in asyncio applications using Redis and the aioredis_ library.
 aiosteady currently implements the `leaky bucket algorithm`_ in a very efficient way.
 
 .. code-block:: python
-    
+
     max_capacity = 10  # The bucket can contain up to 10 drops, starts with 0
     drop_recharge = 5.0  # One drop recharges every 5 seconds.
     throttler = Throttler(aioredis, max_capacity, drop_recharge)
@@ -75,7 +75,7 @@ A ``Throttler`` supports two operations: consuming and peeking.
   * ``success``: a boolean, describing whether the consumption was successful
   * ``level``: an integer, describing the new level of the bucket
   * ``until_next_drop``: a float, describing the number of seconds left after the next drop regenerates
-  
+
   * ``blocked_for``: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
 
 * ``await Throttler.peek("a_key")`` returns the same ``ThrottleResult`` but without attempting to
@@ -85,6 +85,12 @@ Both operations are implemented using a single Redis call, using Lua scripting.
 
 Changelog
 ---------
+
+22.1.0 (UNRELEASED)
+~~~~~~~~~~~~~~~~~~~
+* Switch to CalVer.
+* Add Python 3.10 support.
+
 
 0.2.1 (2021-05-12)
 ~~~~~~~~~~~~~~~~~~

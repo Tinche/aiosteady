@@ -1,11 +1,9 @@
-import pytest
 from asyncio import sleep
 
 from aioredis import Redis
 from aiosteady.leakybucket import Throttler
 
 
-@pytest.mark.asyncio
 async def test_no_block_quick(aioredis: Redis) -> None:
     cap = 10
     recharge = 5
@@ -31,7 +29,6 @@ async def test_no_block_quick(aioredis: Redis) -> None:
     assert not res.success
 
 
-@pytest.mark.asyncio
 async def test_block(aioredis: Redis) -> None:
     recharge = 2
     cap = 5
@@ -94,7 +91,6 @@ async def test_block(aioredis: Redis) -> None:
     assert peek.level == cap - 1
 
 
-@pytest.mark.asyncio
 async def test_no_block_expires(aioredis: Redis) -> None:
     recharge = 1
 
@@ -123,7 +119,6 @@ async def test_no_block_expires(aioredis: Redis) -> None:
         assert not (await aioredis.exists(key)), "Key not expired"
 
 
-@pytest.mark.asyncio
 async def test_optimized_key_expire(aioredis: Redis) -> None:
     cap = 100
     recharge = 1.0
