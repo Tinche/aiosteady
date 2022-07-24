@@ -101,6 +101,7 @@ async def test_expire_no_block(aioredis: Redis) -> None:
 
     for capacity in range(1, 4):
         sut = Throttler(aioredis, capacity, recharge)
+
         for i in range(capacity):
             peek = await sut.peek(key)
             assert peek.success
@@ -147,6 +148,7 @@ async def test_optimized_key_expire(aioredis: Redis) -> None:
     ttl = await aioredis.pttl(key)
     assert ttl == -2, "Key not expired"
 
+
 async def test_recharge(aioredis: Redis) -> None:
     """Drops can be drained/the throttler recharged."""
     cap = 3
@@ -162,7 +164,7 @@ async def test_recharge(aioredis: Redis) -> None:
 
     r2 = await sut.consume(key, -1)
     assert r2.level == 2
-    assert approx(r2.until_next_drop, recharge-0.05)
+    assert approx(r2.until_next_drop, recharge - 0.05)
 
     r3 = await sut.consume(key, -5)
     assert r3.level == 0
