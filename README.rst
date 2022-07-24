@@ -57,6 +57,7 @@ The leaky bucket algorithm follows a simple model.
 * Buckets have a maximum capacity of drops.
 * Each use of the bucket (consumption) inserts one or more drops into the bucket, up until the maximum capacity. If the bucket would overflow, the consumption fails.
 * One drop leaks out every `drop_recharge` seconds, freeing space in the bucket for a new drop to be put into it.
+* The bucket may also be manually drained.
 
 * In addition to making the consumption fail, full buckets can optionally be configured to block further attempts to consume for a period.
 
@@ -75,8 +76,9 @@ A ``Throttler`` supports two operations: consuming and peeking.
   * ``success``: a boolean, describing whether the consumption was successful
   * ``level``: an integer, describing the new level of the bucket
   * ``until_next_drop``: a float, describing the number of seconds left after the next drop regenerates
-
   * ``blocked_for``: an optional float, if blocking is being used and the bucket is blocked, the number of seconds until the block expires
+
+  If the number of drops given is negative, drops are instead removed from the bucket. The bucket may not go below zero drops.
 
 * ``await Throttler.peek("a_key")`` returns the same ``ThrottleResult`` but without attempting to
   consume any drops.
@@ -90,6 +92,7 @@ Changelog
 ~~~~~~~~~~~~~~~~~~~
 * Switch to CalVer.
 * Add Python 3.10 support.
+* Add support for recharging the bucket (removing existing drops).
 
 
 0.2.1 (2021-05-12)

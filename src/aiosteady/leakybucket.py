@@ -1,14 +1,15 @@
-from typing import Optional
-from attr import frozen
+from hashlib import sha1
+from importlib.resources import read_text
+from typing import Final, Optional
+
 from aioredis.commands.scripting import ScriptingCommandsMixin
 from aioredis.errors import ReplyError
-from importlib.resources import read_text
-from hashlib import sha1
+from attr import frozen
 
-SCRIPT_CONSUME = read_text(__package__, "leakybucket_consume.lua")
-_SCRIPT_CONSUME_SHA1 = sha1(SCRIPT_CONSUME.encode("utf8")).hexdigest()
-SCRIPT_PEEK = read_text(__package__, "leakybucket_peek.lua")
-_SCRIPT_PEEK_SHA1 = sha1(SCRIPT_PEEK.encode("utf8")).hexdigest()
+SCRIPT_CONSUME: Final = read_text(__package__, "leakybucket_consume.lua")
+_SCRIPT_CONSUME_SHA1: Final = sha1(SCRIPT_CONSUME.encode("utf8")).hexdigest()
+SCRIPT_PEEK: Final = read_text(__package__, "leakybucket_peek.lua")
+_SCRIPT_PEEK_SHA1: Final = sha1(SCRIPT_PEEK.encode("utf8")).hexdigest()
 
 
 @frozen
@@ -31,7 +32,10 @@ class Throttler:
         key: str,
         amount: int = 1,
     ) -> ThrottleResult:
-        """Attempt consuming a number of drops from the bucket."""
+        """Attempt adding a number of drops from the bucket.
+
+        If the amount is negative, drops are removed from the bucket up to 0.
+        """
         try:
             success, block_remaining, level, to_next = await self.redis.evalsha(
                 _SCRIPT_CONSUME_SHA1,

@@ -1,3 +1,9 @@
+-- The return values are:
+-- * success (bool)
+-- * block duration remaining (float)
+-- * current bucket level (int)
+-- * seconds to next drop (float)
+
 -- this is required to be able to use TIME and writes; basically it lifts the script into IO
 redis.replicate_commands()
 -- make some nicer looking variable names:
@@ -12,19 +18,16 @@ local bucket_level_key = KEYS[1]
 
 -- and the config variables
 local max_bucket_capacity = tonumber(ARGV[1])
-local recharge = tonumber(ARGV[2])
+local recharge_time = tonumber(ARGV[2])
 local block_duration = tonumber(ARGV[3])
+
+-- n_tokens can be negative, which removes drops from the bucket, up to zero.
 local n_tokens = tonumber(ARGV[4]) -- How many tokens this call adds to the bucket. Defaults to 1
 
 -- Take the Redis timestamp
 local redis_time = redis.call("TIME") -- Array of [seconds, microseconds]
 local now = tonumber(redis_time[1]) + (tonumber(redis_time[2]) / 1000000)
 local key_lifetime = 0
-
--- local blocked_until = redis.call("GET", block_key)
--- if blocked_until then
---   return {(tonumber(blocked_until) - now), 0}
--- end
 
 -- get current bucket level. The throttle key might not exist yet in which
 -- case we default to 0
@@ -41,34 +44,43 @@ if key_data ~= false then
   end
 
   if blocked_until > now then
-    return {false, tostring(blocked_until - now), 0, "0.0"}
+    return {false, tostring(blocked_until - now), 0, 0}
   end
 
-  local num_recharges = math.floor((now - last_updated) / recharge)
+  local num_recharges = math.floor((now - last_updated) / recharge_time)
   bucket_level = math.max(0, bucket_level - num_recharges)
 
   if num_recharges > 0 then
-    last_updated = last_updated + num_recharges * recharge
+    last_updated = last_updated + num_recharges * recharge_time
     last_updated = math.min(last_updated, now)
   end
 end
 
-local to_next = tostring(last_updated + recharge - now)
+local next_drop_in = tostring(last_updated + recharge_time - now)
+local new_level = bucket_level + n_tokens
 
-if (bucket_level + n_tokens) <= max_bucket_capacity then
-  bucket_level = bucket_level + n_tokens
-  key_lifetime = bucket_level * recharge
-  retval = {true, 0, bucket_level, to_next}
+if new_level <= 0 then
+  retval = {true, 0, 0, ARGV[2]}  -- ARGV[2] is recharge as a string
+elseif new_level <= max_bucket_capacity then
+  bucket_level = new_level
+  key_lifetime = bucket_level * recharge_time
+  retval = {true, 0, bucket_level, next_drop_in}
 else
   if block_duration ~= 0 then
     blocked_until = now + block_duration
-    key_lifetime = math.max(block_duration, bucket_level * recharge)
+    key_lifetime = math.max(block_duration, bucket_level * recharge_time)
+    retval = {false, tostring(block_duration), 0, next_drop_in}
   else
-    key_lifetime = bucket_level * recharge
+    -- No need to update the Redis state, just return failure.
+    key_lifetime = bucket_level * recharge_time
+    return {false, tostring(block_duration), max_bucket_capacity, next_drop_in}
   end
-  retval = {false, tostring(block_duration), 0, to_next}
 end
 
-redis.call("SETEX", bucket_level_key, key_lifetime, string.format("%d %f %f", bucket_level, last_updated, blocked_until))
+if key_lifetime == 0 then
+  redis.call("DEL", bucket_level_key)
+else
+  redis.call("SETEX", bucket_level_key, key_lifetime, string.format("%d %f %f", bucket_level, last_updated, blocked_until))
+end
 
 return retval

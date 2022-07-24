@@ -1,7 +1,8 @@
 from asyncio import sleep
 
 from aioredis import Redis
-from aiosteady.leakybucket import Throttler
+from aiosteady.leakybucket import Throttler, ThrottleResult
+from pytest import approx
 
 
 async def test_no_block_quick(aioredis: Redis) -> None:
@@ -91,7 +92,8 @@ async def test_block(aioredis: Redis) -> None:
     assert peek.level == cap - 1
 
 
-async def test_no_block_expires(aioredis: Redis) -> None:
+async def test_expire_no_block(aioredis: Redis) -> None:
+    """The key expires properly, no blocking."""
     recharge = 1
 
     key = "test_key"
@@ -114,9 +116,16 @@ async def test_no_block_expires(aioredis: Redis) -> None:
         assert peek.level == capacity
         res = await sut.consume(key)
         assert not res.success
+        assert res.level == capacity
 
         await sleep(capacity * recharge)
-        assert not (await aioredis.exists(key)), "Key not expired"
+        assert await sut.peek(key) == ThrottleResult(True, 0, recharge, None)
+
+        # Due to optimizations in the lua script, the key may actually live up to 1
+        # recharge period longer.
+        await sleep(recharge)
+        ttl = await aioredis.pttl(key)
+        assert ttl == -2, "Key not expired"
 
 
 async def test_optimized_key_expire(aioredis: Redis) -> None:
@@ -131,5 +140,31 @@ async def test_optimized_key_expire(aioredis: Redis) -> None:
     assert (await sut.peek(key)).level == 2
     await sleep(1.0)
     assert await aioredis.exists(key), "Key expired prematurely"
-    await sleep(1.0)
-    assert not (await aioredis.exists(key)), "Key not expired"
+
+    # Due to optimizations in the lua script, the key may actually live up to 1
+    # recharge period longer.
+    await sleep(recharge + 1)
+    ttl = await aioredis.pttl(key)
+    assert ttl == -2, "Key not expired"
+
+async def test_recharge(aioredis: Redis) -> None:
+    """Drops can be drained/the throttler recharged."""
+    cap = 3
+    recharge = 5
+    sut = Throttler(aioredis, cap, recharge)
+
+    key = "recharge_test"
+    await aioredis.delete(key)
+
+    r = await sut.consume(key, 3)
+    assert r.level == 3
+    assert approx(r.until_next_drop, recharge)
+
+    r2 = await sut.consume(key, -1)
+    assert r2.level == 2
+    assert approx(r2.until_next_drop, recharge-0.05)
+
+    r3 = await sut.consume(key, -5)
+    assert r3.level == 0
+    assert not await aioredis.exists(key)
+    assert approx(r3.until_next_drop, recharge)
