@@ -88,7 +88,7 @@ Both operations are implemented using a single Redis call, using Lua scripting.
 Changelog
 ---------
 
-22.1.0 (UNRELEASED)
+22.1.0 (2022-07-24)
 ~~~~~~~~~~~~~~~~~~~
 * Switch to CalVer.
 * Add Python 3.10 support.
