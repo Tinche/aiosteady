@@ -93,6 +93,7 @@ Changelog
 * Switch to CalVer.
 * Add Python 3.10 support.
 * Add support for recharging the bucket (removing existing drops).
+* Switch the main branch name from `master` to `main`.
 
 
 0.2.1 (2021-05-12)
