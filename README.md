@@ -1,13 +1,9 @@
 # aiosteady: rate limiting for asyncio
 
 [![PyPI](https://img.shields.io/pypi/v/aiosteady.svg)](https://pypi.python.org/pypi/aiosteady)
-
 [![Build](https://github.com/Tinche/aiosteady/workflows/CI/badge.svg)](https://github.com/Tinche/aiosteady/actions?workflow=CI)
-
 [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Tinche/7feffdcb180b708726b2f03ece5efef4/raw/covbadge.json)](https://github.com/Tinche/aiosteady/actions/workflows/main.yml)
-
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/aiosteady.svg)](https://github.com/Tinche/aiosteady)
-
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 ------------------------------------------------------------------------
