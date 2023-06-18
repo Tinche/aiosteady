@@ -1,6 +1,8 @@
-from typing import Any, Union
+from typing import Any
 
-LuaArg = Union[str, int, float]
+from typing_extensions import TypeAlias
+
+LuaArg: TypeAlias = str | int | float
 
 class ScriptingCommandsMixin:
     async def eval(

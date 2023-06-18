@@ -1,8 +1,9 @@
 from asyncio import sleep
 
 from aioredis import Redis
-from aiosteady.leakybucket import Throttler, ThrottleResult
 from pytest import approx
+
+from aiosteady.leakybucket import Throttler, ThrottleResult
 
 
 async def test_no_block_quick(aioredis: Redis) -> None:
@@ -160,13 +161,13 @@ async def test_recharge(aioredis: Redis) -> None:
 
     r = await sut.consume(key, 3)
     assert r.level == 3
-    assert approx(r.until_next_drop, recharge)
+    assert r.until_next_drop == approx(recharge)
 
     r2 = await sut.consume(key, -1)
     assert r2.level == 2
-    assert approx(r2.until_next_drop, recharge - 0.05)
+    assert r2.until_next_drop == approx(recharge, abs=0.01)
 
     r3 = await sut.consume(key, -5)
     assert r3.level == 0
     assert not await aioredis.exists(key)
-    assert approx(r3.until_next_drop, recharge)
+    assert r3.until_next_drop == approx(recharge)
