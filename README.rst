@@ -7,8 +7,8 @@ aiosteady: rate limiting for asyncio
 .. image:: https://github.com/Tinche/aiosteady/workflows/CI/badge.svg
         :target: https://github.com/Tinche/aiosteady/actions?workflow=CI
 
-.. image:: https://codecov.io/gh/Tinche/aiosteady/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/Tinche/aiosteady
+.. image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Tinche/7feffdcb180b708726b2f03ece5efef4/raw/covbadge.json
+        :target: https://github.com/Tinche/aiosteady/actions/workflows/main.yml
 
 .. image:: https://img.shields.io/pypi/pyversions/aiosteady.svg
         :target: https://github.com/Tinche/aiosteady
@@ -88,6 +88,10 @@ Both operations are implemented using a single Redis call, using Lua scripting.
 Changelog
 ---------
 
+23.1.0 (UNRELEASED)
+~~~~~~~~~~~~~~~~~~~
+* _aiosteady_ now uses [PDM](https://pdm.fming.dev/latest/).
+
 22.1.0 (2022-07-24)
 ~~~~~~~~~~~~~~~~~~~
 * Switch to CalVer.
@@ -98,7 +102,7 @@ Changelog
 
 0.2.1 (2021-05-12)
 ~~~~~~~~~~~~~~~~~~
-* Improve the ``attrs`` dependency specification, since ``attrs`` uses CalVer.
+* Improve the _attrs_ dependency specification, since _attrs_ uses CalVer.
 
 0.2.0 (2021-04-08)
 ~~~~~~~~~~~~~~~~~~
